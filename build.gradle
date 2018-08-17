@@ -1,0 +1,81 @@
+/**
+ * Copyright (c) 2017 Dell Inc., or its subsidiaries. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.org.nosphere.apache:creadur-rat-gradle:${gradleRatPluginVersion}"
+        classpath "org.ajoberstar:grgit:${gradleGitPluginVersion}"
+    }
+}
+
+// apply the plugin outside of allProjects since the plugin attempts to set the grgit property for all the projects
+// https://github.com/ajoberstar/grgit/blob/master/src/main/groovy/org/ajoberstar/grgit/gradle/GrgitPlugin.groovy#L27
+apply plugin: 'org.ajoberstar.grgit'
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    if (file("src/main/java").isDirectory()) {
+        apply plugin: 'java'
+    }
+    // Plugin configurations
+    apply from: "$rootDir/gradle/checkstyle.gradle"
+    apply from: "$rootDir/gradle/eclipse.gradle"
+    apply from: "$rootDir/gradle/findbugs.gradle"
+    apply from: "$rootDir/gradle/idea.gradle"
+    apply from: "$rootDir/gradle/jacoco.gradle"
+    apply from: "$rootDir/gradle/java.gradle"
+    apply from: "$rootDir/gradle/maven.gradle"
+    apply from: "$rootDir/gradle/rat.gradle"
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+
+    version = getProjectVersion()
+    group = "io.pravega"
+}
+
+project('json') {
+    dependencies {
+        compile group: 'io.pravega', name: 'pravega-client', version: pravegaVersion
+        testCompile group: 'io.pravega', name: 'pravega-test-testcommon', version: pravegaVersion
+    }
+}
+
+def getProjectVersion() {
+    String ver = pravegaSerializerVersion
+    if (ver.contains("-SNAPSHOT")) {
+        String versionLabel = ver.substring(0, ver.indexOf("-SNAPSHOT"))
+        def count = grgit.log(includes:['HEAD']).size()
+        def commitId = "${grgit.head().abbreviatedId}"
+        ver = versionLabel + "-" + count + "." + commitId + "-SNAPSHOT"
+    }
+    return ver
+}
+
+subprojects {
+    version = '0.1'
+}
