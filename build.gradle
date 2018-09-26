@@ -58,7 +58,7 @@ allprojects {
     group = "io.pravega"
 }
 
-project('json') {
+project('gson') {
     dependencies {
         compile group: 'io.pravega', name: 'pravega-client', version: pravegaVersion
         testCompile group: 'io.pravega', name: 'pravega-test-testcommon', version: pravegaVersion

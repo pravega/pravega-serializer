@@ -9,4 +9,4 @@
 
 rootProject.name = 'pravega-serializer'
 
-include 'json'
+include 'gson'
