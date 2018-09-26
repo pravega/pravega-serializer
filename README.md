@@ -9,7 +9,7 @@ To solve this pravega-serializer repository creates different gradle build targe
 The project structure is described below.
 ```
 pravega-serializer
-   |---- json (This supports Json based serializers)
+   |---- gson (This supports Json based serializers)
    |---- avro 
    |---- customer serializer
 ```   
