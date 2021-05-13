@@ -9,7 +9,7 @@ You may obtain a copy of the License at
 -->
 # Pravega Custom Serializers
 
-[Pravega client](https://github.com/pravega/pravega/client) currently implements the following serializers by default `io.pravega.client.stream.impl.JavaSerializer` and `io.pravega.client.stream.impl.ByteArraySerializer`. It does not support any other form of serialization or serializers to enable compression. This is to avoid forcing unwanted dependencies on the user application.
+[Pravega client](https://github.com/pravega/pravega/client) currently implements the following serializers by default `io.pravega.client.stream.impl.UTF8StringSerializer`, `io.pravega.client.stream.impl.ByteArraySerializer`, `io.pravega.client.stream.impl.ByteBufferSerializer` and `io.pravega.client.stream.impl.JavaSerializer`. It does not support any other form of serialization or serializers to enable compression. This is to avoid forcing unwanted dependencies on the user application.
 
 To solve this pravega-serializer repository creates different gradle build targets to generate specific artifacts for serializers which depend on external dependencies. These specialized Pravega serializers depend on a specific type of serializer thereby ensuring no unwanted transitive dependencies are forced on the user application.
 
